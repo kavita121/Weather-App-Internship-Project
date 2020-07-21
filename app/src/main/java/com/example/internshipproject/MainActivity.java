@@ -1,0 +1,265 @@
+package com.example.internshipproject;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    LocationManager locationManager;
+    LocationListener locationListener;
+
+    TextView display;
+
+    String cityURL, cityName, stateName;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100000,0,locationListener);
+            }
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Log.i("info","app started");
+
+        display = findViewById(R.id.displayWeather);
+
+        //Getting the current location of the device
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+                Log.i("Location",location.toString());
+
+                getTheWeather(location);
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else
+        {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100000,0,locationListener);
+        }
+
+    }
+
+    public void getTheWeather(Location location)
+    {
+        //Finding the city name
+
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        try {
+            List<Address> addressList = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+
+            cityName = "";
+            if(addressList != null && addressList.size() > 0)
+            {
+                if(addressList.get(0).getAdminArea() != null)
+                {
+                    stateName = addressList.get(0).getAdminArea().toString();
+                }
+                if(addressList.get(0).getLocality() != null)
+                {
+                    cityName = addressList.get(0).getLocality().toString();
+                }
+            }
+
+        }catch (Exception e)
+        {
+            Log.i("Error!!","finding city name");
+            e.printStackTrace();
+        }
+
+
+        //Finding out the weather using the AsyncTask
+
+        try
+        {
+            DownloadTask task = new DownloadTask();
+
+            Log.i("info","inside findTheWeather function");
+
+            try {
+
+                String city = "";
+                city = URLEncoder.encode(cityName, "UTF-8");
+                Log.i("encoded city is ", city);
+
+                cityURL = "https://openweathermap.org/data/2.5/weather?q="+city+"&appid=439d4b804bc8187953eb36d2a8c26a02";
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.i("Error ","Encoding failed!!");
+            }
+
+            Log.i("cityUrl",cityURL);
+            task.execute(cityURL);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.i("Error!","download task failed");
+            Toast.makeText(getApplicationContext(),"Invalid City Name!!",Toast.LENGTH_SHORT).show();
+            display.setText("");
+        }
+    }
+
+
+    public class DownloadTask extends AsyncTask<String , Void, String >
+    {
+        @Override
+        protected String doInBackground(String... urls) {
+
+            String result = null;
+            HttpURLConnection connection;
+            URL url;
+            try
+            {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                InputStream in = connection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+
+                int data = reader.read();
+
+                while (data != -1)
+                {
+                    char ch = (char) data;
+                    result += ch;
+                    data = reader.read();
+                }
+
+                in.close();
+                reader.close();
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                //TODO find the weather for the state
+                Log.i("Error","Json download failed!!");
+                return "";
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if( s != "" && s != null)
+            {
+                s = s.substring(4,s.length());
+                Log.i("JSON : ",s);
+
+                String res = "";
+                String checkString = "";
+
+                double temperature;
+                String weather = "",description ="";
+
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+                    String weatherInfo = jsonObject.getString("main");
+
+                    Log.i("Weather Content", weatherInfo);
+
+                    JSONObject obj = new JSONObject(weatherInfo);
+                    Log.i("temp", obj.getString("temp"));
+                    temperature = obj.getDouble("temp");
+
+                    weatherInfo = jsonObject.getString("weather");
+                    JSONArray array = new JSONArray(weatherInfo);
+
+                    for( int i=0; i<array.length(); i++ )
+                    {
+                        JSONObject jsonPart = array.getJSONObject(i);
+
+                        weather = jsonPart.getString("main");
+                        description = jsonPart.getString("description");
+                    }
+                    res += weather + ", "+ description + "\n" + "Temperature : " + temperature;
+                    checkString = weather+description+temperature;
+                    if(checkString == "")
+                    {
+                        Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                        display.setText(res);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
+                    display.setText("");
+                }
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
+                display.setText("");
+            }
+
+
+        }
+    }
+}
