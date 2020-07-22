@@ -141,7 +141,8 @@ public class MainActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
 
-        dayAndDate.setText(currentDate);
+        Log.i("date", currentDate.toString());
+        //dayAndDate.setText(currentDate.toString());
 
     }
 
@@ -291,15 +292,15 @@ public class MainActivity extends AppCompatActivity {
                     //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
                     temperature = obj.getDouble("temp");
-                    CityTemp.setText(Double.toString(temperature));
+                    CityTemp.setText(Double.toString(temperature)+(char) 0x00B0);
 
                     //Getting the Max Temperature
                     maxTemp = obj.getDouble("temp_max");
-                    MaxTemp.setText(Double.toString(maxTemp));
+                    MaxTemp.setText(Double.toString(maxTemp)+(char) 0x00B0);
 
                     //Getting the Min temperature
                     minTemp = obj.getDouble("temp_min");
-                    MinTemp.setText(Double.toString(minTemp));
+                    MinTemp.setText(Double.toString(minTemp)+(char) 0x00B0);
 
                     //Getting and setting the pressure
                     pressure = obj.getDouble("pressure");
@@ -334,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                     obj = new JSONObject(weatherInfo);
 
                     wind = obj.getDouble("speed");
-                    Wind.setText(Double.toString(wind));
+                    Wind.setText(Double.toString(wind)+" km/h");
 
 
                     //Gwtting and setting the visibility
