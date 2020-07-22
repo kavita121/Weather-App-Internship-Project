@@ -8,6 +8,22 @@
     android:padding="20dp"
     tools:context=".MainActivity">
 
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="42dp"
+        android:layout_height="35dp"
+        android:background="@drawable/back_button"
+        android:layout_marginTop="10dp"
+        android:onClick="BackToPrevious"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dayAndDate"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="OnClick" />
+
     <TextView
         android:id="@+id/displayWeather"
         android:layout_width="wrap_content"
@@ -18,20 +34,36 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/dayAndDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:gravity="center"
-        android:text="Wednesday, 22 July 2020"
-        android:textSize="16sp"
+        android:layout_width="315dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
+        android:alpha="1"
+        android:background="@drawable/search_background"
+        android:hint="Enter City"
+        android:paddingLeft="18dp"
+        android:textColor="#3A3939"
+        android:textColorHint="#656464"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.999"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+
+    <Button
+        android:layout_width="35dp"
+        android:layout_height="32dp"
+        android:background="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@id/dayAndDate"
+        app:layout_constraintHorizontal_bias="0.957"
+        app:layout_constraintLeft_toLeftOf="@id/dayAndDate"
+        app:layout_constraintRight_toRightOf="@id/dayAndDate"
+        app:layout_constraintTop_toTopOf="@id/dayAndDate"
+        app:layout_constraintVertical_bias="0.022" />
 
     <TextView
         android:id="@+id/cityName"
@@ -63,7 +95,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/cityTemperature"
+        android:id="@+id/temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
@@ -139,7 +171,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/minMaxTempLayout"
+            android:id="@+id/temperatues"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -179,9 +211,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="45dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -193,6 +225,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -249,7 +282,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Humidity"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="35dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintVertical_bias="0.0"
@@ -265,7 +298,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Wind"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="35dp"
         android:layout_marginLeft="210dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintVertical_bias="0.0"
@@ -308,23 +341,6 @@
         app:layout_constraintStart_toStartOf="@+id/linearLayout3"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
-    <Button
-        android:id="@+id/findAnotherCityWeather"
-        android:layout_width="282dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="3dp"
-        android:alpha="0.73"
-        android:background="@drawable/search_button_background"
-        android:gravity="center"
-        android:text="Find Another City's Weather"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:onClick="FindAnotherCityWeather"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <TextView
         android:id="@+id/humidValue"
@@ -389,5 +405,6 @@
         app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
         app:layout_constraintStart_toStartOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

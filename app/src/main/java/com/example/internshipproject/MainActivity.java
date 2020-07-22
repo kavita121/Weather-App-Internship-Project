@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,7 +17,10 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener;
 
     TextView display;
+    TextView dayAndDate, City, CityTemp, Day, MinTemp, MaxTemp, Humidity, Visibility, Pressure, Wind;
+    ImageView  Image;
+    Button SecondPage;
+
 
     String cityURL, cityName, stateName;
 
@@ -61,6 +71,26 @@ public class MainActivity extends AppCompatActivity {
         Log.i("info","app started");
 
         display = findViewById(R.id.displayWeather);
+
+        //Setting Date and Day
+
+        setDateAndDay();
+
+        //Inflating the components
+
+        dayAndDate = findViewById(R.id.dayAndDate);
+        City = findViewById(R.id.cityName);
+        Image = findViewById(R.id.weatherImage);
+        CityTemp = findViewById(R.id.cityTemperature);
+        Day = findViewById(R.id.dayType);
+        MinTemp = findViewById(R.id.minimumTemperature);
+        MaxTemp = findViewById(R.id.maximumTemperature);
+        Humidity = findViewById(R.id.humidValue);
+        Visibility = findViewById(R.id.visibilityValue);
+        Pressure = findViewById(R.id.pressureValue);
+        Wind = findViewById(R.id.windValue);
+
+        SecondPage = findViewById(R.id.findAnotherCityWeather);
 
         //Getting the current location of the device
 
@@ -102,6 +132,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+    //Function to set the date and day in the app
+
+    public void setDateAndDay()
+    {
+        Calendar calendar = Calendar.getInstance();
+        String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+
+        dayAndDate.setText(currentDate);
+
+    }
+
+
+
     public void getTheWeather(Location location)
     {
         //Finding the city name
@@ -121,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 if(addressList.get(0).getLocality() != null)
                 {
                     cityName = addressList.get(0).getLocality().toString();
+                    City.setText(cityName);
                 }
             }
 
@@ -164,6 +210,21 @@ public class MainActivity extends AppCompatActivity {
             display.setText("");
         }
     }
+
+
+
+
+    //Getting the user to the second page to find the weather of another city
+
+    public void FindAnotherCityWeather(View view)
+    {
+        Intent intent = new Intent(getApplicationContext(), AnotherCity.class);
+        startActivity(intent);
+    }
+
+
+
+
 
 
     public class DownloadTask extends AsyncTask<String , Void, String >
@@ -216,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 String res = "";
                 String checkString = "";
 
-                double temperature;
+                double temperature, maxTemp,minTemp,humid,visible,wind, pressure;
                 String weather = "",description ="";
 
                 try {
@@ -226,9 +287,31 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Weather Content", weatherInfo);
 
                     JSONObject obj = new JSONObject(weatherInfo);
+
+                    //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
                     temperature = obj.getDouble("temp");
+                    CityTemp.setText(Double.toString(temperature));
 
+                    //Getting the Max Temperature
+                    maxTemp = obj.getDouble("temp_max");
+                    MaxTemp.setText(Double.toString(maxTemp));
+
+                    //Getting the Min temperature
+                    minTemp = obj.getDouble("temp_min");
+                    MinTemp.setText(Double.toString(minTemp));
+
+                    //Getting and setting the pressure
+                    pressure = obj.getDouble("pressure");
+                    Pressure.setText(Double.toString(pressure));
+
+                    //Getting and setting humidity value
+                    humid = obj.getDouble("humidity");
+                    Humidity.setText(Double.toString(humid));
+
+
+
+                    //Getting the weather info
                     weatherInfo = jsonObject.getString("weather");
                     JSONArray array = new JSONArray(weatherInfo);
 
@@ -239,6 +322,29 @@ public class MainActivity extends AppCompatActivity {
                         weather = jsonPart.getString("main");
                         description = jsonPart.getString("description");
                     }
+
+                    //Setting the weather type
+
+                    Day.setText(weather);
+
+
+                    //Getting and Setting the Wind
+
+                    weatherInfo = jsonObject.getString("wind");
+                    obj = new JSONObject(weatherInfo);
+
+                    wind = obj.getDouble("speed");
+                    Wind.setText(Double.toString(wind));
+
+
+                    //Gwtting and setting the visibility
+
+                    weatherInfo = jsonObject.getString("visibility");
+                    obj = new JSONObject(weatherInfo);
+
+                    visible = obj.getDouble("visibility");
+                    Visibility.setText(Double.toString(visible));
+
                     res += weather + ", "+ description + "\n" + "Temperature : " + temperature;
                     checkString = weather+description+temperature;
                     if(checkString == "")
