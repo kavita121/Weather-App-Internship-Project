@@ -138,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setDateAndDay()
     {
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> d620bf5494110a50ee64d158a41cbbd50b0b234a
         //dayAndDate.setText(currentDate.toString());
         //Calendar calendar = Calendar.getInstance();
         //String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
