@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
     public void setImage(String weatherType){
         if(weatherType.equals("Haze"))
         {
-            Image.setImageResource(R.drawable.Haze);
+            Image.setImageResource(R.drawable.haze);
         }
         else  if(weatherType.equals("Clouds"))
         {
