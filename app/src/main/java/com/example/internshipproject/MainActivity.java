@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -42,26 +43,13 @@ public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
 
-    TextView display;
     TextView dayAndDate, City, CityTemp, Day, MinTemp, MaxTemp, Humidity, Visibility, Pressure, Wind;
     ImageView  Image;
     Button SecondPage;
 
-
     String cityURL, cityName, stateName;
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100000,0,locationListener);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("info","app started");
 
-        display = findViewById(R.id.displayWeather);
 
-        //Setting Date and Day
-
-        setDateAndDay();
 
         //Inflating the components
 
@@ -92,6 +76,26 @@ public class MainActivity extends AppCompatActivity {
 
         SecondPage = findViewById(R.id.findAnotherCityWeather);
 
+
+        //Setting all the views' visibility to invisible and will make it visible when the data will be fetched
+
+        dayAndDate.setVisibility(View.INVISIBLE);
+        City.setVisibility(View.INVISIBLE);
+        Image.setVisibility(View.INVISIBLE);
+        CityTemp.setVisibility(View.INVISIBLE);
+        Day.setVisibility(View.INVISIBLE);
+        MinTemp.setVisibility(View.INVISIBLE);
+        MaxTemp.setVisibility(View.INVISIBLE);
+        Humidity.setVisibility(View.INVISIBLE);
+        Visibility.setVisibility(View.INVISIBLE);
+        Wind.setVisibility(View.INVISIBLE);
+        Pressure.setVisibility(View.INVISIBLE);
+
+
+        //Setting Date and Day
+        setDateAndDay();
+
+
         //Getting the current location of the device
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -102,7 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i("Location",location.toString());
 
-                getTheWeather(location);
+                try {
+                    getTheWeather(location);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -127,40 +135,43 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100000,0,locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
         }
 
     }
 
+
+    //code to deal with the request for access to location
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
+            }
+        }
+    }
 
 
     //Function to set the date and day in the app
 
     public void setDateAndDay()
     {
-<<<<<<< HEAD
+        Calendar calendar = Calendar.getInstance();
+        String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
 
-=======
-        
->>>>>>> d620bf5494110a50ee64d158a41cbbd50b0b234a
-        //dayAndDate.setText(currentDate.toString());
-        //Calendar calendar = Calendar.getInstance();
-        //String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
-
-        //DateFormat df = new SimpleDateFormat("MMM d, yyyy");
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
-
-        //String now = dateFormat.format(new Date());
-
-        //Log.i("date", now.toString());
-        //dayAndDate.setText(now);
+        dayAndDate.setVisibility(View.VISIBLE);         //making the view visible
+        dayAndDate.setText(currentDate);
 
     }
 
 
 
-    public void getTheWeather(Location location)
-    {
+    public void getTheWeather(Location location) throws UnsupportedEncodingException {
         //Finding the city name
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
@@ -178,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 if(addressList.get(0).getLocality() != null)
                 {
                     cityName = addressList.get(0).getLocality().toString();
+                    City.setVisibility(View.VISIBLE);         //making the view visible
                     City.setText(cityName);
                 }
             }
@@ -189,8 +201,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        //Encoding the city's name
+
+        String city = "";
+
+        try {
+            city = URLEncoder.encode(cityName, "UTF-8");
+            Log.i("encoded city is ", city);
+
+        }catch (Exception e)
+        {
+            Log.i("Error","Encoding of city name failed!!");
+            e.printStackTrace();
+        }
+
         //Finding out the weather using the AsyncTask
 
+        findWeather(city);
+    }
+
+
+
+    public void findWeather(String city)
+    {
         try
         {
             DownloadTask task = new DownloadTask();
@@ -199,9 +232,6 @@ public class MainActivity extends AppCompatActivity {
 
             try {
 
-                String city = "";
-                city = URLEncoder.encode(cityName, "UTF-8");
-                Log.i("encoded city is ", city);
 
                 cityURL = "https://openweathermap.org/data/2.5/weather?q="+city+"&appid=439d4b804bc8187953eb36d2a8c26a02";
 
@@ -219,10 +249,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.i("Error!","download task failed");
             Toast.makeText(getApplicationContext(),"Invalid City Name!!",Toast.LENGTH_SHORT).show();
-            display.setText("");
         }
     }
-
 
 
 
@@ -271,7 +299,8 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e)
             {
                 e.printStackTrace();
-                //TODO find the weather for the state
+                //TODO find the weather for New Delhi
+                findWeather("New Delhi");
                 Log.i("Error","Json download failed!!");
                 return "";
             }
@@ -303,22 +332,27 @@ public class MainActivity extends AppCompatActivity {
                     //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
                     temperature = obj.getDouble("temp");
-                    CityTemp.setText(Double.toString(temperature)+(char) 0x00B0);
+                    CityTemp.setVisibility(View.VISIBLE);         //making the view visible
+                    CityTemp.setText(Double.toString(temperature)+(char) 0x00B0);       // (char) 0x00B0 for the degree symbol in text
 
                     //Getting the Max Temperature
                     maxTemp = obj.getDouble("temp_max");
+                    MaxTemp.setVisibility(View.VISIBLE);         //making the view visible
                     MaxTemp.setText(Double.toString(maxTemp)+(char) 0x00B0);
 
                     //Getting the Min temperature
                     minTemp = obj.getDouble("temp_min");
+                    MinTemp.setVisibility(View.VISIBLE);         //making the view visible
                     MinTemp.setText(Double.toString(minTemp)+(char) 0x00B0);
 
                     //Getting and setting the pressure
                     pressure = obj.getDouble("pressure");
+                    Pressure.setVisibility(View.VISIBLE);         //making the view visible
                     Pressure.setText(Double.toString(pressure));
 
                     //Getting and setting humidity value
                     humid = obj.getDouble("humidity");
+                    Humidity.setVisibility(View.VISIBLE);         //making the view visible
                     Humidity.setText(Double.toString(humid));
 
 
@@ -338,6 +372,7 @@ public class MainActivity extends AppCompatActivity {
                     //Setting the weather type
                     setImage(weather);
 
+                    Day.setVisibility(View.VISIBLE);         //making the view visible
                     Day.setText(weather);
 
 
@@ -347,6 +382,7 @@ public class MainActivity extends AppCompatActivity {
                     obj = new JSONObject(weatherInfo);
 
                     wind = obj.getDouble("speed");
+                    Wind.setVisibility(View.VISIBLE);         //making the view visible
                     Wind.setText(Double.toString(wind)+" km/h");
 
 
@@ -356,31 +392,25 @@ public class MainActivity extends AppCompatActivity {
                     obj = new JSONObject(weatherInfo);
 
                     visible = obj.getDouble("visibility");
+                    Visibility.setVisibility(View.VISIBLE);         //making the view visible
                     Visibility.setText(Double.toString(visible));
-
-                    res += weather + ", "+ description + "\n" + "Temperature : " + temperature;
-                    checkString = weather+description+temperature;
-                    if(checkString == "")
-                    {
-                        Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                        display.setText(res);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
-                    display.setText("");
                 }
             }
             else {
                 Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
-                display.setText("");
             }
 
 
         }
     }
+
+
+    //Function to set the images in weather imageView
+
     public void setImage(String weatherType){
         if(weatherType.equals("Haze"))
         {
