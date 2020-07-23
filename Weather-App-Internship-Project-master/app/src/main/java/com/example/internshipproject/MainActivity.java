@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setDateAndDay()
     {
-
+        
         //dayAndDate.setText(currentDate.toString());
         //Calendar calendar = Calendar.getInstance();
         //String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
     public void setImage(String weatherType){
         if(weatherType.equals("Haze"))
         {
-            Image.setImageResource(R.drawable.Haze);
+            Image.setImageResource(R.drawable.haze);
         }
         else  if(weatherType.equals("Clouds"))
         {
