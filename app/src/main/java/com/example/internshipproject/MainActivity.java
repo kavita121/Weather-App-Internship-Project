@@ -138,11 +138,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void setDateAndDay()
     {
-        Calendar calendar = Calendar.getInstance();
-        String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
-
-        Log.i("date", currentDate.toString());
+        
         //dayAndDate.setText(currentDate.toString());
+        //Calendar calendar = Calendar.getInstance();
+        //String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+
+        //DateFormat df = new SimpleDateFormat("MMM d, yyyy");
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+
+        //String now = dateFormat.format(new Date());
+
+        //Log.i("date", now.toString());
+        //dayAndDate.setText(now);
 
     }
 
@@ -325,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //Setting the weather type
+                    setImage(weather);
 
                     Day.setText(weather);
 
@@ -368,5 +376,28 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+    public void setImage(String weatherType){
+        if(weatherType.equals("Haze"))
+        {
+            Image.setImageResource(R.drawable.haze);
+        }
+        else  if(weatherType.equals("Clouds"))
+        {
+            Image.setImageResource(R.drawable.cloudy);
+        }
+        else  if(weatherType.equals("Clear"))
+        {
+            Image.setImageResource(R.drawable.sunny);
+        }
+        else  if(weatherType.equals("Rain"))
+        {
+            Image.setImageResource(R.drawable.rainy);
+        }
+        else  if(weatherType.equals("Thunderstorm"))
+        {
+            Image.setImageResource(R.drawable.thunder);
+        }
+
     }
 }
