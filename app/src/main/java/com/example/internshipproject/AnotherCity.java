@@ -75,14 +75,10 @@ public class AnotherCity extends Activity {
     {
         finish();
     }
-<<<<<<< HEAD
 
 
 
     public class DownloadTask extends AsyncTask<String,Void,String> {
-=======
-    public class DownloadTask extends AsyncTask<String,Void,String>{
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
 
         @Override
         protected String doInBackground(String... urls) {
@@ -96,10 +92,7 @@ public class AnotherCity extends Activity {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = urlConnection.getInputStream();
                 InputStreamReader reader = new InputStreamReader(in);
-<<<<<<< HEAD
 
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                 int data = reader.read();
 
                 while (data != -1) {
@@ -108,51 +101,30 @@ public class AnotherCity extends Activity {
                     data = reader.read();
                 }
 
-<<<<<<< HEAD
                 in.close();
                 reader.close();
 
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                 return result;
 
             } catch (Exception e) {
                 e.printStackTrace();
-<<<<<<< HEAD
                 Log.i("Error","Json download failed!!");
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                 return null;
             }
         }
 
-<<<<<<< HEAD
         @SuppressLint("SetTextI18n")
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if(s != "" && s != null )
-=======
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if( s != "" && s != null)
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
             {
                 s = s.substring(4,s.length());
                 Log.i("JSON : ",s);
 
-<<<<<<< HEAD
 
                 double temperature, maxTemp,minTemp,humid,visible,wind, pressure;
                 String weather = "";
-=======
-                String res = "";
-                String checkString = "";
-
-                double temperature, maxTemp,minTemp,humid,visible,wind, pressure;
-                String weather = "",description ="";
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
 
                 try {
                     JSONObject jsonObject = new JSONObject(s);
@@ -165,44 +137,28 @@ public class AnotherCity extends Activity {
                     //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
                     temperature = obj.getDouble("temp");
-<<<<<<< HEAD
                     CityTemp.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     CityTemp.setText(Double.toString(temperature)+(char) 0x00B0);
 
                     //Getting the Max Temperature
                     maxTemp = obj.getDouble("temp_max");
-<<<<<<< HEAD
                     MaxTemp.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     MaxTemp.setText(Double.toString(maxTemp)+(char) 0x00B0);
 
                     //Getting the Min temperature
                     minTemp = obj.getDouble("temp_min");
-<<<<<<< HEAD
                     MinTemp.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     MinTemp.setText(Double.toString(minTemp)+(char) 0x00B0);
 
                     //Getting and setting the pressure
                     pressure = obj.getDouble("pressure");
-<<<<<<< HEAD
                     Pressure.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     Pressure.setText(Double.toString(pressure));
 
                     //Getting and setting humidity value
                     humid = obj.getDouble("humidity");
-<<<<<<< HEAD
                     Humidity.setVisibility(View.VISIBLE);
                     Humidity.setText(Double.toString(humid)+"%");
-=======
-                    Humidity.setText(Double.toString(humid));
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
 
 
 
@@ -215,20 +171,13 @@ public class AnotherCity extends Activity {
                         JSONObject jsonPart = array.getJSONObject(i);
 
                         weather = jsonPart.getString("main");
-<<<<<<< HEAD
-=======
-                        description = jsonPart.getString("description");
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     }
 
                     //Setting the weather type
 
-<<<<<<< HEAD
                     TypeOfWeather = weather;
                     Log.i("weather type",TypeOfWeather);
                     Day.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     Day.setText(weather);
 
 
@@ -238,16 +187,12 @@ public class AnotherCity extends Activity {
                     obj = new JSONObject(weatherInfo);
 
                     wind = obj.getDouble("speed");
-<<<<<<< HEAD
                     Wind.setVisibility(View.VISIBLE);
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                     Wind.setText(Double.toString(wind)+" km/h");
 
 
                     //Getting and setting the visibility
 
-<<<<<<< HEAD
                     jsonObject = new JSONObject(s);
                     visible = jsonObject.getDouble("visibility");
 
@@ -258,53 +203,23 @@ public class AnotherCity extends Activity {
                     setImage(TypeOfWeather);
 
 
-=======
-                    weatherInfo = jsonObject.getString("visibility");
-                    obj = new JSONObject(weatherInfo);
-
-                    visible = obj.getDouble("visibility");
-                    Visibility.setText(Double.toString(visible));
-
-                    res += weather + ", "+ description + "\n" + "Temperature : " + temperature;
-                    checkString = weather+description+temperature;
-                    if(checkString == "")
-                    {
-                        Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                        display.setText(res);
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
-<<<<<<< HEAD
                 }
             }
-=======
-                    display.setText("");
-                }
-            }
-            else {
-                Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
-                display.setText("");
-            }
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
 
 
         }
     }
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
     public void getWeather(View view)
     {
         try {
 
-<<<<<<< HEAD
             DownloadTask task= new DownloadTask();
             String encodedCityName = URLEncoder.encode(searchCityName.getText().toString(), "UTF-8");
 
@@ -362,20 +277,3 @@ public class AnotherCity extends Activity {
     }
 
 }
-=======
-        DownloadTask task= new DownloadTask();
-        String encodedCityName = URLEncoder.encode(newCityName.getText().toString(), "UTF-8");
-
-        task.execute("http://openweathermap.org/data/2.5/weather?q=" + encodedCityName + "&appid=b1b15e88fa797225412429c1c50c122a1");
-
-        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        mgr.hideSoftInputFromWindow(newCityName.getWindowToken(), 0);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(),"Could not find weather :(",Toast.LENGTH_SHORT).show();
-        }
-
-    }
-}
->>>>>>> 5a3865763ebae53e1771a4f93574937521bf5a22
