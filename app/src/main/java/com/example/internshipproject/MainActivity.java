@@ -412,22 +412,27 @@ public class MainActivity extends AppCompatActivity {
     public void setImage(String weatherType){
         if(weatherType.equals("Haze"))
         {
+            Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.haze);
         }
         else  if(weatherType.equals("Clouds"))
         {
+            Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.cloudy);
         }
         else  if(weatherType.equals("Clear"))
         {
+            Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.sunny);
         }
         else  if(weatherType.equals("Rain"))
         {
+            Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.rainy);
         }
         else  if(weatherType.equals("Thunderstorm"))
         {
+            Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.thunder);
         }
 
