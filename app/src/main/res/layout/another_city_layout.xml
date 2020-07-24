@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:padding="10dp"
-    tools:context=".MainActivity">
+    tools:context=".AnotherCity">
 
 
     <Button
@@ -40,13 +40,13 @@
         android:layout_height="35dp"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
-        android:alpha="1"
         android:background="@drawable/search_background"
         android:hint="Enter City"
         android:paddingLeft="18dp"
         android:textColor="#3A3939"
         android:textColorHint="#656464"
         android:textSize="17sp"
+        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0999"
@@ -59,13 +59,14 @@
         android:layout_width="35dp"
         android:layout_height="32dp"
         android:background="@drawable/search"
-        android:onClick="checkWeather"
+        android:onClick="getWeather"
         app:layout_constraintBottom_toBottomOf="@id/anotherCity"
         app:layout_constraintHorizontal_bias="0.957"
         app:layout_constraintLeft_toLeftOf="@id/anotherCity"
         app:layout_constraintRight_toRightOf="@id/anotherCity"
         app:layout_constraintTop_toTopOf="@id/anotherCity"
-        app:layout_constraintVertical_bias="0.022" />
+        app:layout_constraintVertical_bias="0.022"
+        tools:ignore="OnClick" />
 
     <TextView
         android:id="@+id/newCityName"

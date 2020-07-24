@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView  Image;
     Button SecondPage;
 
-    String cityURL, cityName, stateName;
+    String cityURL, cityName, TypeOfWeather;
 
 
 
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     getTheWeather(location);
-                } catch (UnsupportedEncodingException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
 
     }
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             }
         }
     }
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void getTheWeather(Location location) throws UnsupportedEncodingException {
+    public void getTheWeather(Location location)  {
         //Finding the city name
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
@@ -182,10 +183,6 @@ public class MainActivity extends AppCompatActivity {
             cityName = "";
             if(addressList != null && addressList.size() > 0)
             {
-                if(addressList.get(0).getAdminArea() != null)
-                {
-                    stateName = addressList.get(0).getAdminArea().toString();
-                }
                 if(addressList.get(0).getLocality() != null)
                 {
                     cityName = addressList.get(0).getLocality().toString();
@@ -231,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
             Log.i("info","inside findTheWeather function");
 
             try {
-
 
                 cityURL = "https://openweathermap.org/data/2.5/weather?q="+city+"&appid=439d4b804bc8187953eb36d2a8c26a02";
 
@@ -299,14 +295,14 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e)
             {
                 e.printStackTrace();
-                //TODO find the weather for New Delhi
-                findWeather("New Delhi");
+                findWeather("New"+"Delhi");
                 Log.i("Error","Json download failed!!");
                 return "";
             }
 
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -315,11 +311,8 @@ public class MainActivity extends AppCompatActivity {
                 s = s.substring(4,s.length());
                 Log.i("JSON : ",s);
 
-                String res = "";
-                String checkString = "";
-
                 double temperature, maxTemp,minTemp,humid,visible,wind, pressure;
-                String weather = "",description ="";
+                String weather = "";
 
                 try {
                     JSONObject jsonObject = new JSONObject(s);
@@ -353,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                     //Getting and setting humidity value
                     humid = obj.getDouble("humidity");
                     Humidity.setVisibility(View.VISIBLE);         //making the view visible
-                    Humidity.setText(Double.toString(humid));
+                    Humidity.setText(Double.toString(humid) + " %");
 
 
 
@@ -366,11 +359,12 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonPart = array.getJSONObject(i);
 
                         weather = jsonPart.getString("main");
-                        description = jsonPart.getString("description");
                     }
 
                     //Setting the weather type
                     setImage(weather);
+
+                    TypeOfWeather = weather;
 
                     Day.setVisibility(View.VISIBLE);         //making the view visible
                     Day.setText(weather);
@@ -386,22 +380,26 @@ public class MainActivity extends AppCompatActivity {
                     Wind.setText(Double.toString(wind)+" km/h");
 
 
-                    //Gwtting and setting the visibility
+                    //Getting and setting the visibility
 
-                    weatherInfo = jsonObject.getString("visibility");
-                    obj = new JSONObject(weatherInfo);
+                    jsonObject = new JSONObject(s);
+                    visible = jsonObject.getDouble("visibility");
 
-                    visible = obj.getDouble("visibility");
-                    Visibility.setVisibility(View.VISIBLE);         //making the view visible
+                    Visibility.setVisibility(View.VISIBLE);
                     Visibility.setText(Double.toString(visible));
+
+                    setImage(TypeOfWeather);
+
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
+                    findWeather("New"+"Delhi");
                 }
             }
             else {
                 Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
+                findWeather("New"+"Delhi");
             }
 
 
