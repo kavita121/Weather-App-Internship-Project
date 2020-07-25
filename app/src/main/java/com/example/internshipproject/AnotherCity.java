@@ -79,6 +79,18 @@ public class AnotherCity extends Activity {
 
 
     public class DownloadTask extends AsyncTask<String,Void,String> {
+        
+         @Override
+         protected void onPreExecute() {
+             super.onPreExecute();
+
+             //Showing progressDialog
+             progressDialog = new ProgressDialog(AnotherCity.this);
+             progressDialog.setMessage("Loding..");
+             progressDialog.setCancelable(false);
+             progressDialog.setIndeterminate(false);
+             progressDialog.show();
+         }
 
         @Override
         protected String doInBackground(String... urls) {
@@ -117,6 +129,10 @@ public class AnotherCity extends Activity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            
+             //hiding progressDialog
+             progressDialog.hide();
+            
             if(s != "" && s != null )
             {
                 s = s.substring(4,s.length());
