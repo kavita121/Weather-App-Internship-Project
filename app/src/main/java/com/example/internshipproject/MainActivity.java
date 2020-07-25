@@ -95,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Setting Date and Day
         setDateAndDay();
+        
+        //Showing progressDialog
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMessage("Loading..");
+        progressDialog.show();
 
 
         //Getting the current location of the device
@@ -306,6 +313,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            
+            //removing progressDialog
+            progressDialog.dismiss();
+            
             if( s != "" && s != null)
             {
                 s = s.substring(4,s.length());
