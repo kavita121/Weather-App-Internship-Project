@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     String cityURL, cityName, TypeOfWeather;
 
 
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,10000,locationListener);
         }
 
     }
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,10000,locationListener);
             }
         }
     }
@@ -186,8 +188,6 @@ public class MainActivity extends AppCompatActivity {
                 if(addressList.get(0).getLocality() != null)
                 {
                     cityName = addressList.get(0).getLocality().toString();
-                    City.setVisibility(View.VISIBLE);         //making the view visible
-                    City.setText(cityName);
                 }
             }
 
@@ -263,8 +263,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class DownloadTask extends AsyncTask<String , Void, String >
+    class DownloadTask extends AsyncTask<String , Void, String >
     {
+
+
+
         @Override
         protected String doInBackground(String... urls) {
 
@@ -295,7 +298,9 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e)
             {
                 e.printStackTrace();
-                findWeather("New"+"Delhi");
+                cityName = "New Delhi";
+                findWeather("New"+"+Delhi");
+                Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
                 Log.i("Error","Json download failed!!");
                 return "";
             }
@@ -321,6 +326,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Weather Content", weatherInfo);
 
                     JSONObject obj = new JSONObject(weatherInfo);
+
+                    //Setting the city name
+
+                    City.setVisibility(View.VISIBLE);         //making the view visible
+                    City.setText(cityName);
+
 
                     //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
@@ -390,16 +401,20 @@ public class MainActivity extends AppCompatActivity {
 
                     setImage(TypeOfWeather);
 
+
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
-                    findWeather("New"+"Delhi");
+                    Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
+
+                    cityName = "New Delhi";
+                    findWeather("New"+"+Delhi");
                 }
             }
             else {
                 Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
-                findWeather("New"+"Delhi");
+                cityName = "New Delhi";
+                findWeather("New"+"+Delhi");
             }
 
 

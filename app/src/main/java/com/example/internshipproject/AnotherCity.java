@@ -2,6 +2,7 @@ package com.example.internshipproject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -31,6 +32,8 @@ public class AnotherCity extends Activity {
     EditText searchCityName;
     String TypeOfWeather;
     ImageView Image;
+
+    boolean JSONFailed = false;
 
     String cityURL, cityName;
 
@@ -78,7 +81,7 @@ public class AnotherCity extends Activity {
 
 
 
-    public class DownloadTask extends AsyncTask<String,Void,String> {
+    class DownloadTask extends AsyncTask<String,Void,String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -116,7 +119,8 @@ public class AnotherCity extends Activity {
         @SuppressLint("SetTextI18n")
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+
+
             if(s != "" && s != null )
             {
                 s = s.substring(4,s.length());
@@ -133,6 +137,12 @@ public class AnotherCity extends Activity {
                     Log.i("Weather Content", weatherInfo);
 
                     JSONObject obj = new JSONObject(weatherInfo);
+
+
+                    //Setting city namw
+                    newCityName.setVisibility(View.VISIBLE);
+                    newCityName.setText(cityName);
+
 
                     //Getting the temperature
                     Log.i("temp", obj.getString("temp"));
@@ -209,7 +219,8 @@ public class AnotherCity extends Activity {
                     Toast.makeText(getApplicationContext(),"Invalid City Name",Toast.LENGTH_SHORT).show();
                 }
             }
-
+            else
+                JSONFailed = true;
 
         }
     }
@@ -223,6 +234,8 @@ public class AnotherCity extends Activity {
             DownloadTask task= new DownloadTask();
             String encodedCityName = URLEncoder.encode(searchCityName.getText().toString(), "UTF-8");
 
+            cityName = searchCityName.getText().toString();
+
             Log.i("city name",encodedCityName);
 
             cityURL = "https://openweathermap.org/data/2.5/weather?q="+encodedCityName+"&appid=439d4b804bc8187953eb36d2a8c26a02";
@@ -231,6 +244,10 @@ public class AnotherCity extends Activity {
 
             task.execute(cityURL);
 
+            if(JSONFailed == true)
+            {
+                Toast.makeText(getApplicationContext(),"Could not find weather :(", Toast.LENGTH_SHORT).show();
+            }
 
             //to hide the keyboard
 
