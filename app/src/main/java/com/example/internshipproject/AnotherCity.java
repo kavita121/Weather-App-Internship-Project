@@ -35,6 +35,8 @@ public class AnotherCity extends Activity {
 
     boolean JSONFailed = false;
 
+    ProgressDialog progressDialog;
+
     String cityURL, cityName;
 
     @Override
@@ -84,6 +86,18 @@ public class AnotherCity extends Activity {
     class DownloadTask extends AsyncTask<String,Void,String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //Showing progressDialog
+            progressDialog = new ProgressDialog(AnotherCity.this);
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(false);
+            progressDialog.show();
+        }
+
+        @Override
         protected String doInBackground(String... urls) {
             String result = null;
             URL url;
@@ -120,6 +134,8 @@ public class AnotherCity extends Activity {
         @Override
         protected void onPostExecute(String s) {
 
+            //hiding progressDialog
+            progressDialog.hide();
 
             if(s != "" && s != null )
             {
@@ -163,7 +179,7 @@ public class AnotherCity extends Activity {
                     //Getting and setting the pressure
                     pressure = obj.getDouble("pressure");
                     Pressure.setVisibility(View.VISIBLE);
-                    Pressure.setText(Double.toString(pressure));
+                    Pressure.setText(Double.toString(pressure)+" hPa");
 
                     //Getting and setting humidity value
                     humid = obj.getDouble("humidity");
@@ -289,6 +305,31 @@ public class AnotherCity extends Activity {
         {
             Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.thunder);
+        }
+        else if(weatherType.equals("Mist"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.mist);
+        }
+        else if(weatherType.equals("Foggy"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.foggy);
+        }
+        else if(weatherType.equals("Hailstrom"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.hailstorm);
+        }
+        else if(weatherType.equals("Sleet"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.sleet);
+        }
+        else if(weatherType.equals("Smoke"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.smoke);
         }
 
     }

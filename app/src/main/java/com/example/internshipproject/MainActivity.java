@@ -98,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
         //Setting Date and Day
         setDateAndDay();
 
+        //Showing progressDialog
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
 
         //Getting the current location of the device
 
@@ -132,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
+
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -266,8 +274,6 @@ public class MainActivity extends AppCompatActivity {
     class DownloadTask extends AsyncTask<String , Void, String >
     {
 
-
-
         @Override
         protected String doInBackground(String... urls) {
 
@@ -300,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 cityName = "New Delhi";
                 findWeather("New"+"+Delhi");
-                Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Invalid City Name", Toast.LENGTH_SHORT).show();
                 Log.i("Error","Json download failed!!");
                 return "";
             }
@@ -311,6 +317,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
+            //removing progressDialog
+            progressDialog.dismiss();
+
             if( s != "" && s != null)
             {
                 s = s.substring(4,s.length());
@@ -352,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                     //Getting and setting the pressure
                     pressure = obj.getDouble("pressure");
                     Pressure.setVisibility(View.VISIBLE);         //making the view visible
-                    Pressure.setText(Double.toString(pressure));
+                    Pressure.setText(Double.toString(pressure)+" hPa");
 
                     //Getting and setting humidity value
                     humid = obj.getDouble("humidity");
@@ -449,6 +459,31 @@ public class MainActivity extends AppCompatActivity {
         {
             Image.setVisibility(View.VISIBLE);
             Image.setImageResource(R.drawable.thunder);
+        }
+        else if(weatherType.equals("Mist"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.mist);
+        }
+        else if(weatherType.equals("Foggy"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.foggy);
+        }
+        else if(weatherType.equals("Hailstrom"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.hailstorm);
+        }
+        else if(weatherType.equals("Sleet"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.sleet);
+        }
+        else if(weatherType.equals("Smoke"))
+        {
+            Image.setVisibility(View.VISIBLE);
+            Image.setImageResource(R.drawable.smoke);
         }
 
     }

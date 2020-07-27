@@ -7,9 +7,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/grey"
+        android:icon="@drawable/icconn"
         android:label="Weather"
-        android:roundIcon="@drawable/grey"
+        android:roundIcon="@drawable/icconn"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
