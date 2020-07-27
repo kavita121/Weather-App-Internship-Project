@@ -86,7 +86,7 @@ public class AnotherCity extends Activity {
 
              //Showing progressDialog
              progressDialog = new ProgressDialog(AnotherCity.this);
-             progressDialog.setMessage("Loding..");
+             progressDialog.setMessage("Loading..");
              progressDialog.setCancelable(false);
              progressDialog.setIndeterminate(false);
              progressDialog.show();
